@@ -1,5 +1,7 @@
 package com.clo.rtw;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 public class ConstructorContainer {
@@ -20,5 +22,11 @@ public class ConstructorContainer {
 
     public <T> T getComponent(Class<T> compClass) {
         return compClass.cast(container.get(compClass));
+    }
+
+    public <T> void registerComponent(Class<T> compClass, Object parameter) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Constructor<T> constructor = compClass.getConstructor(parameter.getClass());
+        T component = constructor.newInstance(parameter);
+        container.put(compClass, component);
     }
 }
