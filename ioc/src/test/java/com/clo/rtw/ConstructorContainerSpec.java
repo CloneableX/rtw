@@ -5,8 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ConstructorContainerSpec {
 
@@ -26,7 +25,8 @@ public class ConstructorContainerSpec {
     @Test
     public void should_get_one_MovieFinder_instance_when_register_MovieList_instance() throws InstantiationException, IllegalAccessException {
         container.registerComponent(MovieFinder.class);
-        Object result = container.getComponent(MovieFinder.class);
-        assertTrue(result instanceof MovieFinder);
+        MovieFinder result = container.getComponent(MovieFinder.class);
+        assertNotNull(result);
     }
+
 }

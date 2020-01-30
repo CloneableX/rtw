@@ -6,11 +6,11 @@ public class ConstructorContainer {
     private HashMap<Class, Object> container;
 
     public ConstructorContainer() {
-        container = new HashMap();
+        container = new HashMap<Class, Object>();
     }
 
-    public void registerComponent(Class compClass) throws IllegalAccessException, InstantiationException {
-        Object component = compClass.newInstance();
+    public <T> void registerComponent(Class<T> compClass) throws IllegalAccessException, InstantiationException {
+        T component = compClass.newInstance();
         container.put(compClass, component);
     }
 
@@ -18,7 +18,7 @@ public class ConstructorContainer {
         return container.size();
     }
 
-    public Object getComponent(Class compClass) {
-        return container.get(compClass);
+    public <T> T getComponent(Class<T> compClass) {
+        return compClass.cast(container.get(compClass));
     }
 }
