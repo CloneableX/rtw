@@ -1,5 +1,6 @@
 package com.clo.rtw;
 
+import com.clo.rtw.movie.Movie;
 import com.clo.rtw.movie.MovieFinder;
 import com.clo.rtw.movie.MovieList;
 import org.junit.Before;
@@ -14,6 +15,7 @@ import static org.junit.Assert.*;
 
 public class ConstructorContainerSpec {
 
+    public static final String FILE_NAME = "movie.txt";
     private ConstructorContainer container;
 
     @Before
@@ -36,19 +38,19 @@ public class ConstructorContainerSpec {
 
     @Test
     public void should_store_MovieFinder_when_register_MovieFinder_instance_with_parameters() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        String fileName = "movie.txt";
         String separator = ";";
-        container.registerComponent(MovieFinder.class, fileName, separator);
+        container.registerComponent(MovieFinder.class, FILE_NAME, separator);
         MovieFinder movieFinder = container.getComponent(MovieFinder.class);
-        assertThat(movieFinder, is(new MovieFinder(fileName, separator)));
+        assertThat(movieFinder, is(new MovieFinder(FILE_NAME, separator)));
     }
 
     @Test
-    public void should_store_MovieList_when_register_MovieList_with_dependency() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        String fileName = "movie.txt";
-        container.registerComponent(MovieFinder.class, fileName);
-        container.registerComponent(MovieList.class, MovieFinder.class);
+    public void should_store_MovieList_when_register_MovieList_with_dependencies() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        container.registerComponent(MovieFinder.class, FILE_NAME);
+        container.registerComponent(Movie.class);
+        container.registerComponent(MovieList.class, MovieFinder.class, Movie.class);
         MovieList movieList = container.getComponent(MovieList.class);
-        assertThat(movieList.getMovieFinder(), is(new MovieFinder(fileName)));
+        assertThat(movieList.getMovieFinder(), is(new MovieFinder(FILE_NAME)));
+        assertNotNull(movieList.getMovie());
     }
 }

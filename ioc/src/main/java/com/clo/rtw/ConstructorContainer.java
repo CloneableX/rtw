@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class ConstructorContainer {
-    private HashMap<Class, Object> container;
+    private HashMap<Class<?>, Object> container;
 
     public ConstructorContainer() {
         container = new HashMap<>();
@@ -19,7 +19,7 @@ public class ConstructorContainer {
     }
 
     public <T> void registerComponent(Class<T> compClass, Object... parameters) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Class[] parametersClass = new Class[parameters.length];
+        Class<?>[] parametersClass = new Class[parameters.length];
 
         Arrays.stream(parameters).map(Object::getClass).collect(Collectors.toList()).toArray(parametersClass);
         Constructor<T> constructor = compClass.getConstructor(parametersClass);
@@ -27,9 +27,9 @@ public class ConstructorContainer {
         container.put(compClass, component);
     }
 
-    public <T> void registerComponent(Class<T> compClass, Class dependencyClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Object dependency = getComponent(dependencyClass);
-        registerComponent(compClass, dependency);
+    public <T> void registerComponent(Class<T> compClass, Class<?>... dependenceClasses) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Object[] dependencies = Arrays.stream(dependenceClasses).map((Class dependenceClass) -> getComponent(dependenceClass)).toArray();
+        registerComponent(compClass, dependencies);
     }
 
     public int size() {
