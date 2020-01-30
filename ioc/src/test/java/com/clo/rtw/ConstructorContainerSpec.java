@@ -1,6 +1,7 @@
 package com.clo.rtw;
 
 import com.clo.rtw.movie.MovieFinder;
+import com.clo.rtw.movie.MovieList;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,19 +35,20 @@ public class ConstructorContainerSpec {
     }
 
     @Test
-    public void should_store_MovieFinder_when_register_MovieFinder_instance_with_parameter() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        String fileName = "movie.txt";
-        container.registerComponent(MovieFinder.class, fileName);
-        MovieFinder movieFinder = container.getComponent(MovieFinder.class);
-        assertThat(movieFinder.getFileName(), is(fileName));
-    }
-
-    @Test
     public void should_store_MovieFinder_when_register_MovieFinder_instance_with_parameters() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         String fileName = "movie.txt";
         String separator = ";";
         container.registerComponent(MovieFinder.class, fileName, separator);
         MovieFinder movieFinder = container.getComponent(MovieFinder.class);
         assertThat(movieFinder, is(new MovieFinder(fileName, separator)));
+    }
+
+    @Test
+    public void should_store_MovieList_when_register_MovieList_with_dependency() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        String fileName = "movie.txt";
+        container.registerComponent(MovieFinder.class, fileName);
+        container.registerComponent(MovieList.class, MovieFinder.class);
+        MovieList movieList = container.getComponent(MovieList.class);
+        assertThat(movieList.getMovieFinder(), is(new MovieFinder(fileName)));
     }
 }
