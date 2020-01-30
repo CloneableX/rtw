@@ -4,7 +4,9 @@ import com.clo.rtw.movie.MovieFinder;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -37,5 +39,14 @@ public class ConstructorContainerSpec {
         container.registerComponent(MovieFinder.class, fileName);
         MovieFinder movieFinder = container.getComponent(MovieFinder.class);
         assertThat(movieFinder.getFileName(), is(fileName));
+    }
+
+    @Test
+    public void should_store_MovieFinder_when_register_MovieFinder_instance_with_parameters() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        String fileName = "movie.txt";
+        String separator = ";";
+        container.registerComponent(MovieFinder.class, fileName, separator);
+        MovieFinder movieFinder = container.getComponent(MovieFinder.class);
+        assertThat(movieFinder, is(new MovieFinder(fileName, separator)));
     }
 }
