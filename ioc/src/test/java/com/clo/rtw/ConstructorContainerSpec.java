@@ -50,14 +50,23 @@ public class ConstructorContainerSpec {
         container.registerComponent(Movie.class);
         container.registerComponent(MovieList.class, ColonMovieFinder.class, Movie.class);
         MovieList movieList = container.getComponent(MovieList.class);
-        assertThat(movieList.getMovieFinder(), is(new ColonMovieFinder(FILE_NAME)));
+        assertThat(movieList.getColonMovieFinder(), is(new ColonMovieFinder(FILE_NAME)));
         assertNotNull(movieList.getMovie());
     }
 
     @Test
     public void should_store_interface_implementation_when_register_interface_component() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        container.registerComponent(MovieFinder.class, ColonMovieFinder.class, FILE_NAME);
+        container.registerComponentImplementation(MovieFinder.class, ColonMovieFinder.class, FILE_NAME);
         MovieFinder movieFinder = container.getComponent(MovieFinder.class);
         assertNotNull(movieFinder);
+    }
+
+    @Test
+    public void should_store_instance_when_register_class_dependency_interface() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        container.registerComponentImplementation(MovieFinder.class, ColonMovieFinder.class, FILE_NAME);
+        container.registerComponentImplementation(MovieList.class, MovieFinder.class);
+        MovieList movieList = container.getComponent(MovieList.class);
+
+        assertNotNull(movieList.getMovieFinder());
     }
 }

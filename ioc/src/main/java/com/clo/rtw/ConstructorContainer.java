@@ -27,15 +27,24 @@ public class ConstructorContainer {
         registerComponent(compClass, dependencies);
     }
 
-    public <T> void registerComponent(Class<T> compClass, Class<? extends T> implementation, Object... parameters) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    public <T> void registerComponentImplementation(Class<T> compClass, Class<? extends T> implementation, Object... parameters) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         container.put(compClass, newInstance(implementation, parameters));
+    }
+
+    public <T> void registerComponentImplementation(Class<T> compClass, Class<?> dependency) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        Object dependencyComp = getComponent(dependency);
+        container.put(compClass, newInstance(compClass, new Object[] {dependencyComp}, dependency));
     }
 
     private <T> T newInstance(Class<T> instanceClass, Object[] parameters) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         Class<?>[] parametersClass = new Class[parameters.length];
         Arrays.stream(parameters).map(Object::getClass).collect(Collectors.toList()).toArray(parametersClass);
-        Constructor<T> constructor = instanceClass.getConstructor(parametersClass);
-        return constructor.newInstance(parameters);
+        return newInstance(instanceClass, parameters, parametersClass);
+    }
+
+    private <T> T newInstance(Class<T> instanceClass, Object[] params, Class<?>... paramClasses) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        Constructor<T> constructor = instanceClass.getConstructor(paramClasses);
+        return constructor.newInstance(params);
     }
 
     public int size() {
