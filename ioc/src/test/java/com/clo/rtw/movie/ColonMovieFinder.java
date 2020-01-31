@@ -2,7 +2,7 @@ package com.clo.rtw.movie;
 
 import java.util.Objects;
 
-public class ColonMovieFinder {
+public class ColonMovieFinder implements MovieFinder {
     private String fileName;
     private String separator;
 
