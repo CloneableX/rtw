@@ -15,7 +15,30 @@ public class CtorContainer {
     }
 
     public void registerCompImplementation(Class<?> compClass) throws IllegalAccessException, InstantiationException {
-        Object component = compClass.newInstance();
+        registerComponent(compClass, compClass.newInstance());
+    }
+
+    public void registerCompImplementation(Class<?> compClass, Object... params) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        registerComponent(compClass, compClass, params);
+    }
+
+    public <T> void registerCompImplementation(Class<T> interfaceClass, Class<? extends T> compClass) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        registerComponent(interfaceClass, compClass.newInstance());
+    }
+
+    public <T> void registerCompImplementation(Class<T> interfaceClass, Class<? extends T> compClass, Object... params) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        registerComponent(interfaceClass, compClass, params);
+    }
+
+    private void registerComponent(Class<?> compClass, Class<?> instanceClass, Object[] params) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        Class<?>[] paramClasses = new Class[params.length];
+        Arrays.stream(params).map(Object::getClass).collect(Collectors.toList()).toArray(paramClasses);
+        Constructor<?> constructor = instanceClass.getConstructor(paramClasses);
+        Object component = constructor.newInstance(params);
+        registerComponent(compClass, component);
+    }
+
+    private void registerComponent(Class<?> compClass, Object component) {
         container.put(compClass, component);
     }
 
@@ -25,13 +48,5 @@ public class CtorContainer {
 
     public Object getComponent(Class<?> compClass) {
         return container.get(compClass);
-    }
-
-    public void registerCompImplementation(Class<?> compClass, Object... params) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Class<?>[] paramClasses = new Class[params.length];
-        Arrays.stream(params).map(Object::getClass).collect(Collectors.toList()).toArray(paramClasses);
-        Constructor<?> constructor = compClass.getConstructor(paramClasses);
-        Object component = constructor.newInstance(params);
-        container.put(compClass, component);
     }
 }

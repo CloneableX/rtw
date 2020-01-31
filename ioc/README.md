@@ -6,10 +6,10 @@
 
 #### Task List
 
-- [ ] 注册普通组件
-- [ ] 通过组件 Class 获取组件
-- [ ] 注册实现了 Interface 的组件
-- [ ] 通过 Interface 的 Class 获取组件
+- [x] 注册普通组件
+- [x] 通过组件 Class 获取组件
+- [x] 注册实现了 Interface 的组件
+- [x] 通过 Interface 的 Class 获取组件
 - [ ] 注册继承了类的 Class 组件
 - [ ] 通过超类 Class 获取组件
 - [ ] 注册继承了实现 Interface 的类的组件
