@@ -1,9 +1,6 @@
 package com.clo.rtw;
 
-import com.clo.rtw.movie.Movie;
-import com.clo.rtw.movie.ColonMovieFinder;
-import com.clo.rtw.movie.MovieFinder;
-import com.clo.rtw.movie.MovieList;
+import com.clo.rtw.movie.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -68,5 +65,24 @@ public class ConstructorContainerSpec {
         MovieList movieList = container.getComponent(MovieList.class);
 
         assertNotNull(movieList.getMovieFinder());
+    }
+
+    @Test
+    public void should_store_component_when_register_interface_with_empty_constructor() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        container.registerComponentImplementation(MovieDisplay.class, OnlineMovieDisplay.class);
+        MovieDisplay movieDisplay = container.getComponent(MovieDisplay.class);
+
+        assertNotNull(movieDisplay);
+
+    }
+    @Test
+    public void should_store_component_when_register_component_dependency_multiple_interfaces() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        container.registerComponentImplementation(MovieFinder.class, ColonMovieFinder.class, FILE_NAME);
+        container.registerComponentImplementation(MovieDisplay.class, OnlineMovieDisplay.class);
+        container.registerComponentImplementation(MovieList.class, MovieFinder.class, MovieDisplay.class);
+        MovieList movieList = container.getComponent(MovieList.class);
+
+        assertNotNull(movieList.getMovieFinder());
+        assertNotNull(movieList.getMovieDisplay());
     }
 }

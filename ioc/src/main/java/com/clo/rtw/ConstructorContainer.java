@@ -31,9 +31,13 @@ public class ConstructorContainer {
         container.put(compClass, newInstance(implementation, parameters));
     }
 
-    public <T> void registerComponentImplementation(Class<T> compClass, Class<?> dependency) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        Object dependencyComp = getComponent(dependency);
-        container.put(compClass, newInstance(compClass, new Object[] {dependencyComp}, dependency));
+    public <T> void registerComponentImplementation(Class<T> compClass, Class<?>... dependencies) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        Object[] dependencyComps = Arrays.stream(dependencies).map(this::getComponent).toArray();
+        container.put(compClass, newInstance(compClass, dependencyComps, dependencies));
+    }
+
+    public <T> void registerComponentImplementation(Class<T> compClass, Class<? extends T> implementation) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        container.put(compClass, implementation.newInstance());
     }
 
     private <T> T newInstance(Class<T> instanceClass, Object[] parameters) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
