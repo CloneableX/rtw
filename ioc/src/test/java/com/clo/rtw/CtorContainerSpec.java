@@ -1,15 +1,11 @@
 package com.clo.rtw;
 
-import com.clo.rtw.friut.Apple;
-import com.clo.rtw.friut.Fruit;
-import com.clo.rtw.friut.Peelable;
-import com.clo.rtw.friut.Peeler;
+import com.clo.rtw.friut.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class CtorContainerSpec {
 
@@ -68,5 +64,17 @@ public class CtorContainerSpec {
         Peeler component = (Peeler) container.getComponent(Peeler.class);
 
         assertThat(component.getPeelable(), is(dependence));
+    }
+
+    @Test
+    public void should_get_component_with_dependencies_params_when_register_component_with_dependencies() throws Exception {
+        container.registerCompImplementation(Peelable.class, Apple.class, FRUIT_COLOR);
+        container.registerCompImplementation(Peeler.class);
+        container.registerCompImplementation(Juicer.class);
+        Peelable peelable = (Peelable) container.getComponent(Peelable.class);
+        Juicer component = (Juicer) container.getComponent(Juicer.class);
+
+        assertThat(component.getPeelable(), is(peelable));
+        assertNotNull(component.getPeeler());
     }
 }

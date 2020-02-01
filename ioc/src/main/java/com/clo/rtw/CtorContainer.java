@@ -16,7 +16,7 @@ public class CtorContainer {
     }
 
     public void registerCompImplementation(Class<?> compClass) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        registerComponent(compClass, injectDependence(compClass));
+        registerComponent(compClass, injectDependency(compClass));
     }
 
     public void registerCompImplementation(Class<?> compClass, Object... params) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -39,11 +39,11 @@ public class CtorContainer {
         registerComponent(compClass, component);
     }
 
-    private void registerComponent(Class<?> compClass, Object component) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void registerComponent(Class<?> compClass, Object component) {
         container.put(compClass, component);
     }
 
-    private Object injectDependence(Class<?> compClass) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    private Object injectDependency(Class<?> compClass) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         Field[] fields = compClass.getDeclaredFields();
         Object[] dependenceList = Arrays.stream(fields).map((Field field) -> getComponent(field.getType())).toArray(Object[]::new);
         Class<?>[] dependenceClasses = Arrays.stream(fields).map(Field::getType).toArray(Class<?>[]::new);
