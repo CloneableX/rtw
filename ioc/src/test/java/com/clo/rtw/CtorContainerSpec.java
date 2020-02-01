@@ -3,6 +3,7 @@ package com.clo.rtw;
 import com.clo.rtw.friut.Apple;
 import com.clo.rtw.friut.Fruit;
 import com.clo.rtw.friut.Peelable;
+import com.clo.rtw.friut.Peeler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,5 +58,15 @@ public class CtorContainerSpec {
         Peelable component = (Peelable) container.getComponent(Peelable.class);
 
         assertThat(component, is(new Apple(FRUIT_COLOR)));
+    }
+
+    @Test
+    public void should_get_component_with_dependence_when_register_component_with_dependence() throws Exception {
+        container.registerCompImplementation(Peelable.class, Apple.class, FRUIT_COLOR);
+        container.registerCompImplementation(Peeler.class);
+        Peelable dependence = (Peelable) container.getComponent(Peelable.class);
+        Peeler component = (Peeler) container.getComponent(Peeler.class);
+
+        assertThat(component.getPeelable(), is(dependence));
     }
 }

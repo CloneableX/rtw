@@ -1,6 +1,7 @@
 package com.clo.rtw;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,15 +15,15 @@ public class CtorContainer {
         this.container = new HashMap<>();
     }
 
-    public void registerCompImplementation(Class<?> compClass) throws IllegalAccessException, InstantiationException {
-        registerComponent(compClass, compClass.newInstance());
+    public void registerCompImplementation(Class<?> compClass) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        registerComponent(compClass, injectDependence(compClass));
     }
 
     public void registerCompImplementation(Class<?> compClass, Object... params) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         registerComponent(compClass, compClass, params);
     }
 
-    public <T> void registerCompImplementation(Class<T> interfaceClass, Class<? extends T> compClass) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    public <T> void registerCompImplementation(Class<T> interfaceClass, Class<? extends T> compClass) throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
         registerComponent(interfaceClass, compClass.newInstance());
     }
 
@@ -38,8 +39,16 @@ public class CtorContainer {
         registerComponent(compClass, component);
     }
 
-    private void registerComponent(Class<?> compClass, Object component) {
+    private void registerComponent(Class<?> compClass, Object component) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         container.put(compClass, component);
+    }
+
+    private Object injectDependence(Class<?> compClass) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        Field[] fields = compClass.getDeclaredFields();
+        Object[] dependenceList = Arrays.stream(fields).map((Field field) -> getComponent(field.getType())).toArray(Object[]::new);
+        Class<?>[] dependenceClasses = Arrays.stream(fields).map(Field::getType).toArray(Class<?>[]::new);
+        Constructor<?> constructor = compClass.getConstructor(dependenceClasses);
+        return constructor.newInstance(dependenceList);
     }
 
     public int size() {
