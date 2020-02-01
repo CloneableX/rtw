@@ -6,8 +6,6 @@ import com.clo.rtw.friut.Peelable;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.InvocationTargetException;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -23,21 +21,21 @@ public class CtorContainerSpec {
     }
 
     @Test
-    public void should_get_component_size_1_when_register_normal_component() throws InstantiationException, IllegalAccessException {
+    public void should_get_component_size_1_when_register_normal_component() throws Exception {
         container.registerCompImplementation(Fruit.class);
 
         assertThat(container.size(), is(1));
     }
 
     @Test
-    public void should_get_component_when_register_component() throws InstantiationException, IllegalAccessException {
+    public void should_get_component_when_register_component() throws Exception {
         container.registerCompImplementation(Fruit.class);
 
         assertTrue(container.getComponent(Fruit.class) instanceof Fruit);
     }
 
     @Test
-    public void should_get_component_with_params_when_register_component_with_params() throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    public void should_get_component_with_params_when_register_component_with_params() throws Exception {
         String name = "apple";
         container.registerCompImplementation(Fruit.class, name, FRUIT_COLOR);
         Fruit component = (Fruit) container.getComponent(Fruit.class);
@@ -46,7 +44,7 @@ public class CtorContainerSpec {
     }
 
     @Test
-    public void should_get_component_by_interface_class_when_register_component_implementation() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void should_get_component_by_interface_class_when_register_component_implementation() throws Exception {
         container.registerCompImplementation(Peelable.class, Apple.class);
         Peelable component = (Peelable) container.getComponent(Peelable.class);
 
@@ -54,7 +52,7 @@ public class CtorContainerSpec {
     }
 
     @Test
-    public void should_get_component_by_interface_class_when_register_component_implementation_with_params() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void should_get_component_by_interface_class_when_register_component_implementation_with_params() throws Exception {
         container.registerCompImplementation(Peelable.class, Apple.class, FRUIT_COLOR);
         Peelable component = (Peelable) container.getComponent(Peelable.class);
 
